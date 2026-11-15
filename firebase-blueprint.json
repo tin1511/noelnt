@@ -1,0 +1,162 @@
+{
+  "entities": {
+    "GreetingConfig": {
+      "title": "GreetingConfig",
+      "description": "Configuration for the 3D Christmas greeting card including headline lines, letter paragraphs, signature, and photo count.",
+      "type": "object",
+      "properties": {
+        "headline1": {
+          "type": "string",
+          "description": "First line of the 3D particle headline greeting.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "headline2": {
+          "type": "string",
+          "description": "Second line of the 3D particle headline greeting.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "letter": {
+          "type": "string",
+          "description": "Full text of the Christmas letter, with paragraphs separated by double newlines.",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "sign": {
+          "type": "string",
+          "description": "Signature at the bottom of the letter.",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "photoCount": {
+          "type": "number",
+          "description": "Total number of photos hanging on the Christmas tree (1 to 12)."
+        },
+        "bgm": {
+          "type": "string",
+          "description": "Background music track preset ID, audio URL, or base64 audio data URL.",
+          "minLength": 1,
+          "maxLength": 600000
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the user who created or manages the configuration.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the configuration was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the configuration was last updated."
+        }
+      },
+      "required": [
+        "headline1",
+        "headline2",
+        "letter",
+        "sign",
+        "photoCount",
+        "ownerId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "TreePhoto": {
+      "title": "TreePhoto",
+      "description": "Individual photo ornament hanging on the 3D Christmas tree.",
+      "type": "object",
+      "properties": {
+        "greetingId": {
+          "type": "string",
+          "description": "ID of the parent GreetingConfig document.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "order": {
+          "type": "number",
+          "description": "Zero-based index of the photo on the tree (0 to 11)."
+        },
+        "caption": {
+          "type": "string",
+          "description": "Caption displayed below the photo when opened.",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "src": {
+          "type": "string",
+          "description": "Base64 JPEG data URL of the compressed square photo.",
+          "minLength": 10,
+          "maxLength": 800000
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the user who uploaded the photo.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the photo document was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the photo document was last updated."
+        }
+      },
+      "required": [
+        "greetingId",
+        "order",
+        "caption",
+        "src",
+        "ownerId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Trusted administrator record keyed by user UID.",
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["admin"],
+          "description": "Admin role identifier.",
+          "minLength": 5,
+          "maxLength": 5
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when admin was registered."
+        }
+      },
+      "required": ["role", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/greetings/{greetingId}": {
+      "schema": { "$ref": "#/entities/GreetingConfig" },
+      "description": "Stores the main 3D Christmas card greeting configuration."
+    },
+    "/greetings/{greetingId}/photos/{photoId}": {
+      "schema": { "$ref": "#/entities/TreePhoto" },
+      "description": "Stores individual hanging photos belonging to a greeting configuration."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Stores administrator UIDs for role-based access control."
+    }
+  }
+}
